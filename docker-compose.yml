@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+  db:
+    image: mariadb:10.1
+    container_name: drupal_db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    networks:
+      - private-tier
+    environment: 
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  
+  drupal:
+    image: drupal:fpm-alpine
+    container_name: drupal_worker
+    depends_on: 
+      - db
+    networks: 
+      - private-tier
+      - public-tier
+    volumes: 
+      - drupal:/var/www/html
+    
+  webserver:
+    image: nginx:alpine
+    container_name: drupal_webserver
+    restart: unless-stopped
+    ports: 
+      - "8080:80"
+    volumes:
+      -  drupal:/var/www/html
+      - ./nginx:/etc/nginx/conf.d
+      - ./logs/nginx:/var/logs/nginx
+    depends_on: 
+      - drupal
+    networks:
+      - public-tier
+
+networks: 
+  private-tier:
+  public-tier:
+
+volumes: 
+  drupal:
