@@ -1,6 +1,6 @@
 # Drupal Stack
 
-> Rapidly launch **Drupal** application runtime over **MariaDB** to develop *sites*, *themes* or *plugins*.
+> Rapidly launch **Drupal** application runtime over **MariaDB** to develop *sites*, *themes* or *modules*.
 
 ## Development
 
